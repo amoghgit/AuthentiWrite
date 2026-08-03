@@ -36,9 +36,12 @@ ai-service/
 - **Burstiness**: Variance of sentence lengths normalized by mean sentence length (flat length distribution indicates AI generation).
 - **Lexical Richness & Vocabulary**: Type-Token Ratio (TTR), Root TTR, and rare word ratios.
 - **Readability & Complexity**: Flesch Reading Ease, Flesch-Kincaid Grade level via `textstat`.
-- **Syntactic & Grammar Metrics**: Sentence mechanics index, passive voice density, structural consistency.
+- **Syntactic & Grammar Metrics**: POS tag distribution, noun chunks, and clauses parsing via `spaCy` (`en_core_web_sm`).
 - **Formulaic Language & Cliché Detection**: Identification of LLM boilerplate transitions (*Furthermore, In conclusion, pivotal role, tapestry of life, delve into*).
-- **Narrative Coherence**: Sentence-to-sentence semantic similarity matrix computed via TF-IDF vector cosine similarities.
+- **Narrative Coherence**: Sentence-to-sentence semantic similarity matrix computed via dense embeddings from `sentence-transformers` (`all-MiniLM-L6-v2`).
+- **Explainable Reasoning**: Local LLM pipeline using `transformers` (`google/flan-t5-small`) to dynamically generate natural language explanations for sentence classifications.
+
+> **Note on First Run**: The microservice will automatically download the `spaCy`, `sentence-transformers`, and `transformers` models (~1GB total) into memory during startup (`uvicorn` lifecycle event).
 
 ---
 

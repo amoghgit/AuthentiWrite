@@ -26,6 +26,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.on_event("startup")
+async def startup_event():
+    print("Pre-loading ML models into memory...")
+    from analysis.nlp_engine import get_spacy_model, get_st_model
+    from services.analysis_service import get_llm_pipeline
+    get_spacy_model()
+    get_st_model()
+    get_llm_pipeline()
+    print("ML models loaded successfully.")
+
 # Register routers
 app.include_router(health_router)
 app.include_router(analyze_router)

@@ -46,6 +46,12 @@ Return an explainable JSON report following this exact structure:
 }}
 """
 
+SENTENCE_REASON_PROMPT = """
+You are an expert NLP analyst. Briefly explain in one sentence WHY the following sentence was classified as {class_label}, given these evidence points: {evidence}.
+Sentence: "{sentence}"
+Explanation:
+"""
+
 AI_TRANSITION_WORDS = [
     "furthermore",
     "in conclusion",
