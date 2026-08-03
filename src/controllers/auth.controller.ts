@@ -11,8 +11,8 @@ import { AppError } from '../middleware/error.middleware';
  */
 const generateToken = (userId: string, email: string, role: string): string => {
   return jwt.sign({ id: userId, email, role }, env.JWT_SECRET, {
-    expiresIn: env.JWT_EXPIRES_IN,
-  });
+    expiresIn: env.JWT_EXPIRES_IN as string | number,
+  } as jwt.SignOptions);
 };
 
 /**
