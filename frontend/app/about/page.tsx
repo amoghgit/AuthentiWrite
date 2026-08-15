@@ -59,31 +59,6 @@ export default function AboutPage() {
               </Card>
             </section>
 
-            {/* Roadmap Section */}
-            <section>
-              <div className="flex items-center mb-6">
-                <Rocket className="h-8 w-8 text-warning mr-4" />
-                <h2 className="text-3xl font-bold font-outfit">Phase 1 Roadmap</h2>
-              </div>
-              <Card className="glass-card border-border/50">
-                <CardContent className="p-8">
-                  <ul className="space-y-4">
-                    <li className="flex items-center text-lg">
-                      <span className="h-2 w-2 bg-accent rounded-full mr-4" />
-                      <span className="font-semibold mr-2">Q3 2024:</span> MVP Launch with Mock Data Analysis
-                    </li>
-                    <li className="flex items-center text-lg text-muted-foreground">
-                      <span className="h-2 w-2 bg-border rounded-full mr-4" />
-                      <span className="font-semibold mr-2">Q4 2024:</span> Backend API Integration & Real AI Models
-                    </li>
-                    <li className="flex items-center text-lg text-muted-foreground">
-                      <span className="h-2 w-2 bg-border rounded-full mr-4" />
-                      <span className="font-semibold mr-2">Q1 2025:</span> User Authentication & Cloud History
-                    </li>
-                  </ul>
-                </CardContent>
-              </Card>
-            </section>
           </div>
         </div>
       </main>
