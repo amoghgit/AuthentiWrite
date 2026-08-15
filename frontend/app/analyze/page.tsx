@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Upload, FileText, Eraser, Copy, Download, CheckCircle, ShieldAlert } from "lucide-react";
-import { mockAnalysisData, AnalysisData } from "@/data/mock-analysis";
+import { AnalysisData } from "@/data/mock-analysis";
+import { analyzeText } from "@/lib/analyzer";
 import { toast } from "sonner";
 import {
   Tooltip,
@@ -34,12 +35,12 @@ export default function AnalyzePage() {
     setIsAnalyzing(true);
     setResult(null);
 
-    // Mock network request
+    // Dynamic analysis based on actual essay content
     setTimeout(() => {
       setIsAnalyzing(false);
-      setResult(mockAnalysisData);
+      setResult(analyzeText(text));
       toast.success("Analysis complete!");
-    }, 2500);
+    }, 1500); // reduced simulated delay slightly for better UX
   };
 
   const handleReset = () => {
