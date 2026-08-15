@@ -25,6 +25,13 @@ export interface AnalysisData {
   humanIndicators: string[];
   aiIndicators: string[];
   essay: HighlightSegment[];
+  metricDescriptions?: {
+    readability: string;
+    vocabulary: string;
+    complexity: string;
+    grammar: string;
+    originality: string;
+  };
 }
 
 export const mockAnalysisData: AnalysisData = {
@@ -37,6 +44,13 @@ export const mockAnalysisData: AnalysisData = {
     complexity: 70,
     grammar: 95,
     originality: 68
+  },
+  metricDescriptions: {
+    readability: "Flesch reading ease score of 82",
+    vocabulary: "74% unique words",
+    complexity: "Average sentence length of 15 words",
+    grammar: "Few repeated words",
+    originality: "Strong personal pronouns used"
   },
   humanIndicators: [
     "High lexical diversity in personal anecdotes",

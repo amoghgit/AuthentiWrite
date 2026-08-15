@@ -342,11 +342,11 @@ function Dashboard({ result, onReset }: { result: AnalysisData; onReset: () => v
             <CardTitle>Detailed Metrics</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <MetricBar label="Readability" value={result.metrics.readability} />
-            <MetricBar label="Vocabulary Diversity" value={result.metrics.vocabulary} />
-            <MetricBar label="Sentence Complexity" value={result.metrics.complexity} />
-            <MetricBar label="Grammar Quality" value={result.metrics.grammar} />
-            <MetricBar label="Originality Estimate" value={result.metrics.originality} />
+            <MetricBar label="Readability" value={result.metrics.readability} description={result.metricDescriptions?.readability} />
+            <MetricBar label="Vocabulary Diversity" value={result.metrics.vocabulary} description={result.metricDescriptions?.vocabulary} />
+            <MetricBar label="Sentence Complexity" value={result.metrics.complexity} description={result.metricDescriptions?.complexity} />
+            <MetricBar label="Grammar Quality" value={result.metrics.grammar} description={result.metricDescriptions?.grammar} />
+            <MetricBar label="Originality Estimate" value={result.metrics.originality} description={result.metricDescriptions?.originality} />
           </CardContent>
         </Card>
       </div>
@@ -354,10 +354,10 @@ function Dashboard({ result, onReset }: { result: AnalysisData; onReset: () => v
   );
 }
 
-function MetricBar({ label, value }: { label: string, value: number }) {
+function MetricBar({ label, value, description }: { label: string, value: number, description?: string }) {
   return (
     <div className="space-y-2">
-      <div className="flex justify-between text-sm">
+      <div className="flex justify-between text-sm items-center">
         <span className="font-medium text-foreground/90">{label}</span>
         <span className="text-muted-foreground font-semibold">{value}%</span>
       </div>
@@ -369,6 +369,9 @@ function MetricBar({ label, value }: { label: string, value: number }) {
           className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
         />
       </div>
+      {description && (
+        <p className="text-xs text-muted-foreground/80 mt-1">{description}</p>
+      )}
     </div>
   );
 }

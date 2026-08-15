@@ -170,6 +170,13 @@ export function analyzeText(text: string): AnalysisData {
       grammar: grammarScore,
       originality: originalityScore
     },
+    metricDescriptions: {
+      readability: `Flesch reading ease score of ${normalizedReadability.toFixed(1)} based on syllable and sentence length averages.`,
+      vocabulary: `${uniqueWords.size} unique words out of ${wordCount} total words (${Math.round((uniqueWords.size / wordCount) * 100)}%).`,
+      complexity: `Sentences average ${Math.round(avgSentenceLength)} words with a standard deviation of ${sentenceLengthStdDev.toFixed(1)} words.`,
+      grammar: `${highlyRepeatedWords} highly repeated words detected across the text.`,
+      originality: `${firstPersonCount} personal pronouns used across ${wordCount} words.`
+    },
     humanIndicators,
     aiIndicators,
     essay: essaySegments
@@ -182,6 +189,13 @@ function generateEmptyAnalysis(): AnalysisData {
     confidence: "Low",
     overallScore: 0,
     metrics: { readability: 0, vocabulary: 0, complexity: 0, grammar: 0, originality: 0 },
+    metricDescriptions: {
+      readability: "Insufficient text",
+      vocabulary: "Insufficient text",
+      complexity: "Insufficient text",
+      grammar: "Insufficient text",
+      originality: "Insufficient text"
+    },
     humanIndicators: [],
     aiIndicators: [],
     essay: []
