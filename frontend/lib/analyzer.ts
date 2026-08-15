@@ -104,13 +104,13 @@ export function analyzeText(text: string): AnalysisData {
   const humanIndicators: string[] = [];
   const aiIndicators: string[] = [];
 
-  if (firstPersonCount > 2) humanIndicators.push("Strong personal voice and pronoun usage");
-  if (sentenceLengthStdDev > 5) humanIndicators.push("Natural sentence length variation");
-  if (vocabScore > 75) humanIndicators.push("High lexical diversity");
+  if (firstPersonCount > 2) humanIndicators.push(`Strong personal voice with ${firstPersonCount} first-person pronouns used`);
+  if (sentenceLengthStdDev > 5) humanIndicators.push(`Natural sentence length variation (std dev of ${sentenceLengthStdDev.toFixed(1)} words)`);
+  if (vocabScore > 75) humanIndicators.push(`High lexical diversity (${uniqueWords.size} unique words out of ${wordCount})`);
 
-  if (transitionWordCount > (wordCount / 50)) aiIndicators.push("Heavy reliance on formulaic transition words");
-  if (sentenceLengthStdDev < 2 && sentenceCount > 3) aiIndicators.push("Extremely uniform sentence lengths");
-  if (firstPersonCount === 0 && wordCount > 50) aiIndicators.push("Lack of personal pronouns");
+  if (transitionWordCount > (wordCount / 50)) aiIndicators.push(`Heavy reliance on formulaic transition words (${transitionWordCount} detected)`);
+  if (sentenceLengthStdDev < 2 && sentenceCount > 3) aiIndicators.push(`Extremely uniform sentence lengths (averaging ${Math.round(avgSentenceLength)} words)`);
+  if (firstPersonCount === 0 && wordCount > 50) aiIndicators.push(`Lack of personal pronouns (0 detected in ${wordCount} words)`);
 
   if (humanIndicators.length === 0) humanIndicators.push("No strong human indicators detected.");
   if (aiIndicators.length === 0) aiIndicators.push("No strong AI indicators detected.");
