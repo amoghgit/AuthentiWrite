@@ -32,7 +32,7 @@ export default function LandingPage() {
             className="inline-flex items-center rounded-full border border-brand/20 bg-brand/10 backdrop-blur-md px-4 py-1.5 text-sm font-medium text-brand mb-8 shadow-sm"
           >
             <Sparkles className="mr-2 h-4 w-4" />
-            <span>Phase 1 MVP Now Live</span>
+            <span>Next-Gen Essay Analysis Engine</span>
           </motion.div>
 
           <motion.h1
