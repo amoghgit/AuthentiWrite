@@ -47,47 +47,6 @@ export default function AnalyzePage() {
     }, 1500); // reduced simulated delay slightly for better UX
   };
 
-  const handleExport = () => {
-    if (!result) return;
-
-    const reportContent = `# AuthentiWrite Analysis Report
-Date: ${new Date().toLocaleString()}
-
-## Overall Assessment
-**Score:** ${result.overallScore}/100
-**Assessment:** ${result.overallAssessment}
-**Confidence:** ${result.confidence}
-
-## Detailed Metrics
-- Readability: ${result.metrics.readability}% (${result.metricDescriptions?.readability || ""})
-- Vocabulary Diversity: ${result.metrics.vocabulary}% (${result.metricDescriptions?.vocabulary || ""})
-- Sentence Complexity: ${result.metrics.complexity}% (${result.metricDescriptions?.complexity || ""})
-- Grammar Quality: ${result.metrics.grammar}% (${result.metricDescriptions?.grammar || ""})
-- Originality Estimate: ${result.metrics.originality}% (${result.metricDescriptions?.originality || ""})
-
-## Key Indicators
-### Human Characteristics
-${result.humanIndicators.length > 0 ? result.humanIndicators.map(i => `- ${i}`).join('\n') : "None detected"}
-
-### AI Characteristics
-${result.aiIndicators.length > 0 ? result.aiIndicators.map(i => `- ${i}`).join('\n') : "None detected"}
-
-## Detailed Essay Breakdown
-${result.essay.map(seg => `[${seg.classification}] ${seg.text}`).join('\n')}
-`;
-
-    const blob = new Blob([reportContent], { type: "text/markdown" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `authentiwrite-report-${Date.now()}.md`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    
-    toast.success("Report downloaded successfully");
-  };
 
   const handleReset = () => {
     setText("");
@@ -224,6 +183,48 @@ ${result.essay.map(seg => `[${seg.classification}] ${seg.text}`).join('\n')}
 
 // Inline Dashboard Component for simplicity in Phase 1
 function Dashboard({ result, onReset }: { result: AnalysisData; onReset: () => void }) {
+  const handleExport = () => {
+    if (!result) return;
+
+    const reportContent = `# AuthentiWrite Analysis Report
+Date: ${new Date().toLocaleString()}
+
+## Overall Assessment
+**Score:** ${result.overallScore}/100
+**Assessment:** ${result.overallAssessment}
+**Confidence:** ${result.confidence}
+
+## Detailed Metrics
+- Readability: ${result.metrics.readability}% (${result.metricDescriptions?.readability || ""})
+- Vocabulary Diversity: ${result.metrics.vocabulary}% (${result.metricDescriptions?.vocabulary || ""})
+- Sentence Complexity: ${result.metrics.complexity}% (${result.metricDescriptions?.complexity || ""})
+- Grammar Quality: ${result.metrics.grammar}% (${result.metricDescriptions?.grammar || ""})
+- Originality Estimate: ${result.metrics.originality}% (${result.metricDescriptions?.originality || ""})
+
+## Key Indicators
+### Human Characteristics
+${result.humanIndicators.length > 0 ? result.humanIndicators.map(i => `- ${i}`).join('\n') : "None detected"}
+
+### AI Characteristics
+${result.aiIndicators.length > 0 ? result.aiIndicators.map(i => `- ${i}`).join('\n') : "None detected"}
+
+## Detailed Essay Breakdown
+${result.essay.map(seg => `[${seg.classification}] ${seg.text}`).join('\n')}
+`;
+
+    const blob = new Blob([reportContent], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `authentiwrite-report-${Date.now()}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    toast.success("Report downloaded successfully");
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
