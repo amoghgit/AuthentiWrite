@@ -186,37 +186,37 @@ function Dashboard({ result, onReset }: { result: AnalysisData; onReset: () => v
   const handleExport = () => {
     if (!result) return;
 
-    const reportContent = `# AuthentiWrite Analysis Report
+    const reportContent = `AUTHENTIWRITE ANALYSIS REPORT
 Date: ${new Date().toLocaleString()}
 
-## Overall Assessment
-**Score:** ${result.overallScore}/100
-**Assessment:** ${result.overallAssessment}
-**Confidence:** ${result.confidence}
+OVERALL ASSESSMENT
+Score: ${result.overallScore}/100
+Assessment: ${result.overallAssessment}
+Confidence: ${result.confidence}
 
-## Detailed Metrics
+DETAILED METRICS
 - Readability: ${result.metrics.readability}% (${result.metricDescriptions?.readability || ""})
 - Vocabulary Diversity: ${result.metrics.vocabulary}% (${result.metricDescriptions?.vocabulary || ""})
 - Sentence Complexity: ${result.metrics.complexity}% (${result.metricDescriptions?.complexity || ""})
 - Grammar Quality: ${result.metrics.grammar}% (${result.metricDescriptions?.grammar || ""})
 - Originality Estimate: ${result.metrics.originality}% (${result.metricDescriptions?.originality || ""})
 
-## Key Indicators
-### Human Characteristics
+KEY INDICATORS
+[Human Characteristics]
 ${result.humanIndicators.length > 0 ? result.humanIndicators.map(i => `- ${i}`).join('\n') : "None detected"}
 
-### AI Characteristics
+[AI Characteristics]
 ${result.aiIndicators.length > 0 ? result.aiIndicators.map(i => `- ${i}`).join('\n') : "None detected"}
 
-## Detailed Essay Breakdown
+DETAILED ESSAY BREAKDOWN
 ${result.essay.map(seg => `[${seg.classification}] ${seg.text}`).join('\n')}
 `;
 
-    const blob = new Blob([reportContent], { type: "text/markdown" });
+    const blob = new Blob([reportContent], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `authentiwrite-report-${Date.now()}.md`;
+    a.download = `authentiwrite-report-${Date.now()}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
