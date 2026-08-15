@@ -11,6 +11,7 @@ import { AnalysisData } from "@/data/mock-analysis";
 import { analyzeText } from "@/lib/analyzer";
 import { toast } from "sonner";
 import { useAnalysisHistory } from "@/hooks/useAnalysisHistory";
+import jsPDF from "jspdf";
 import {
   Tooltip,
   TooltipContent,
@@ -186,43 +187,72 @@ function Dashboard({ result, onReset }: { result: AnalysisData; onReset: () => v
   const handleExport = () => {
     if (!result) return;
 
-    const reportContent = `AUTHENTIWRITE ANALYSIS REPORT
-Date: ${new Date().toLocaleString()}
+    const doc = new jsPDF();
+    let y = 20;
+    const x = 20;
+    const lineHeight = 7;
+    const pageHeight = doc.internal.pageSize.height;
+    const maxWidth = 170;
 
-OVERALL ASSESSMENT
-Score: ${result.overallScore}/100
-Assessment: ${result.overallAssessment}
-Confidence: ${result.confidence}
+    const addText = (text: string, size = 12, isBold = false) => {
+      doc.setFontSize(size);
+      doc.setFont("helvetica", isBold ? "bold" : "normal");
+      
+      const lines = doc.splitTextToSize(text, maxWidth);
+      lines.forEach((line: string) => {
+        if (y + lineHeight > pageHeight - 20) {
+          doc.addPage();
+          y = 20;
+        }
+        doc.text(line, x, y);
+        y += lineHeight;
+      });
+    };
 
-DETAILED METRICS
-- Readability: ${result.metrics.readability}% (${result.metricDescriptions?.readability || ""})
-- Vocabulary Diversity: ${result.metrics.vocabulary}% (${result.metricDescriptions?.vocabulary || ""})
-- Sentence Complexity: ${result.metrics.complexity}% (${result.metricDescriptions?.complexity || ""})
-- Grammar Quality: ${result.metrics.grammar}% (${result.metricDescriptions?.grammar || ""})
-- Originality Estimate: ${result.metrics.originality}% (${result.metricDescriptions?.originality || ""})
+    addText("AUTHENTIWRITE ANALYSIS REPORT", 18, true);
+    y += 5;
+    addText(`Date: ${new Date().toLocaleString()}`, 10);
+    y += 10;
 
-KEY INDICATORS
-[Human Characteristics]
-${result.humanIndicators.length > 0 ? result.humanIndicators.map(i => `- ${i}`).join('\n') : "None detected"}
+    addText("OVERALL ASSESSMENT", 14, true);
+    addText(`Score: ${result.overallScore}/100`);
+    addText(`Assessment: ${result.overallAssessment}`);
+    addText(`Confidence: ${result.confidence}`);
+    y += 10;
 
-[AI Characteristics]
-${result.aiIndicators.length > 0 ? result.aiIndicators.map(i => `- ${i}`).join('\n') : "None detected"}
+    addText("DETAILED METRICS", 14, true);
+    addText(`- Readability: ${result.metrics.readability}% (${result.metricDescriptions?.readability || ""})`);
+    addText(`- Vocabulary Diversity: ${result.metrics.vocabulary}% (${result.metricDescriptions?.vocabulary || ""})`);
+    addText(`- Sentence Complexity: ${result.metrics.complexity}% (${result.metricDescriptions?.complexity || ""})`);
+    addText(`- Grammar Quality: ${result.metrics.grammar}% (${result.metricDescriptions?.grammar || ""})`);
+    addText(`- Originality Estimate: ${result.metrics.originality}% (${result.metricDescriptions?.originality || ""})`);
+    y += 10;
 
-DETAILED ESSAY BREAKDOWN
-${result.essay.map(seg => `[${seg.classification}] ${seg.text}`).join('\n')}
-`;
+    addText("KEY INDICATORS", 14, true);
+    addText("[Human Characteristics]", 12, true);
+    if (result.humanIndicators.length > 0) {
+      result.humanIndicators.forEach(i => addText(`- ${i}`));
+    } else {
+      addText("None detected");
+    }
+    y += 5;
 
-    const blob = new Blob([reportContent], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `authentiwrite-report-${Date.now()}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    
-    toast.success("Report downloaded successfully");
+    addText("[AI Characteristics]", 12, true);
+    if (result.aiIndicators.length > 0) {
+      result.aiIndicators.forEach(i => addText(`- ${i}`));
+    } else {
+      addText("None detected");
+    }
+    y += 10;
+
+    addText("DETAILED ESSAY BREAKDOWN", 14, true);
+    result.essay.forEach(seg => {
+      addText(`[${seg.classification}] ${seg.text}`);
+      y += 2;
+    });
+
+    doc.save(`authentiwrite-report-${Date.now()}.pdf`);
+    toast.success("PDF Report downloaded successfully");
   };
 
   return (
