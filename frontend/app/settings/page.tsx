@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -10,6 +11,29 @@ import { Button } from "@/components/ui/button";
 
 export default function SettingsPage() {
   const { setTheme, theme } = useTheme();
+
+  const [animations, setAnimations] = useState(true);
+  const [largeText, setLargeText] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedAnimations = localStorage.getItem("authentiwrite_animations");
+      if (storedAnimations !== null) setAnimations(storedAnimations === "true");
+      
+      const storedLargeText = localStorage.getItem("authentiwrite_largeText");
+      if (storedLargeText !== null) setLargeText(storedLargeText === "true");
+    }
+  }, []);
+
+  const handleAnimationsChange = (checked: boolean) => {
+    setAnimations(checked);
+    localStorage.setItem("authentiwrite_animations", checked.toString());
+  };
+
+  const handleLargeTextChange = (checked: boolean) => {
+    setLargeText(checked);
+    localStorage.setItem("authentiwrite_largeText", checked.toString());
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -69,14 +93,14 @@ export default function SettingsPage() {
                   <Label className="text-base flex items-center"><Zap className="mr-2 h-4 w-4 text-muted-foreground" /> Interface Animations</Label>
                   <p className="text-sm text-muted-foreground">Enable smooth transitions and hover effects.</p>
                 </div>
-                <Switch defaultChecked />
+                <Switch checked={animations} onCheckedChange={handleAnimationsChange} />
               </div>
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label className="text-base flex items-center"><Type className="mr-2 h-4 w-4 text-muted-foreground" /> Large Text</Label>
                   <p className="text-sm text-muted-foreground">Increase font size in the analysis editor.</p>
                 </div>
-                <Switch />
+                <Switch checked={largeText} onCheckedChange={handleLargeTextChange} />
               </div>
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
