@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Navbar } from "@/components/layout/Navbar";
 import { Button } from "@/components/ui/button";
@@ -22,7 +22,9 @@ import {
 export default function AnalyzePage() {
   const [text, setText] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [result, setResult] = useState<AnalysisData | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { addAnalysis } = useAnalysisHistory();
 
   const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
@@ -30,11 +32,11 @@ export default function AnalyzePage() {
   const readTime = Math.ceil(wordCount / 200);
 
   const handleAnalyze = () => {
-    if (wordCount < 10) {
-      toast.error("Please enter at least 10 words to analyze.");
+    if (!text.trim() || text.split(/\s+/).filter(w => w.length > 0).length < 20) {
+      toast.error("Please enter at least 20 words for a meaningful analysis.");
       return;
     }
-    
+
     setIsAnalyzing(true);
     setResult(null);
 
@@ -47,6 +49,53 @@ export default function AnalyzePage() {
       toast.success("Analysis complete!");
     }, 1500); // reduced simulated delay slightly for better UX
   };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    
+    if (file.type !== "application/pdf") {
+      toast.error("Please upload a valid PDF document.");
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+      toast.info("Extracting text from PDF...");
+      
+      const arrayBuffer = await file.arrayBuffer();
+      
+      const pdfjsLib = await import('pdfjs-dist');
+      pdfjsLib.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+      
+      const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+      const pdf = await loadingTask.promise;
+      
+      let fullText = "";
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items.map((item: any) => item.str).join(' ');
+        fullText += pageText + "\n\n";
+      }
+      
+      if (!fullText.trim()) {
+        toast.error("Could not extract any text from this PDF. It might be a scanned image.");
+      } else {
+        setText(fullText.trim());
+        toast.success("PDF text successfully extracted!");
+      }
+    } catch (error) {
+      console.error("PDF Extraction Error:", error);
+      toast.error("Failed to parse the PDF document.");
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
 
 
   const handleReset = () => {
@@ -132,9 +181,21 @@ export default function AnalyzePage() {
                     </div>
 
                     <div className="flex space-x-3 w-full sm:w-auto">
-                      <Button variant="outline" className="flex-1 sm:flex-none border-border">
-                        <Upload className="mr-2 h-4 w-4" />
-                        Upload File
+                      <input 
+                        type="file" 
+                        accept="application/pdf" 
+                        ref={fileInputRef} 
+                        onChange={handleFileUpload} 
+                        className="hidden" 
+                      />
+                      <Button 
+                        variant="outline" 
+                        className="flex-1 sm:flex-none border-border" 
+                        onClick={() => fileInputRef.current?.click()} 
+                        disabled={isUploading}
+                      >
+                        {isUploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
+                        {isUploading ? "Extracting..." : "Upload File"}
                       </Button>
                       <Button onClick={handleAnalyze} className="flex-1 sm:flex-none bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20">
                         <Sparkles className="mr-2 h-4 w-4" />
