@@ -526,9 +526,9 @@ function Dashboard({ result, onReset }: { result: AnalysisData; onReset: () => v
             <div className="bg-background/50 rounded-xl p-6 text-base leading-loose border border-border/50 font-inter">
               <TooltipProvider delay={200}>
                 {result.essay.map((segment) => {
-                  let bgClass = "bg-accent/20 hover:bg-accent/30 text-accent-foreground";
-                  if (segment.classification === "Likely AI Assisted") bgClass = "bg-danger/20 hover:bg-danger/30 text-danger-foreground";
-                  if (segment.classification === "Mixed") bgClass = "bg-warning/20 hover:bg-warning/30 text-warning-foreground";
+                  let bgClass = "bg-accent/20 hover:bg-accent/30 text-foreground";
+                  if (segment.classification === "Likely AI Assisted") bgClass = "bg-danger/20 hover:bg-danger/30 text-foreground";
+                  if (segment.classification === "Mixed") bgClass = "bg-warning/20 hover:bg-warning/30 text-foreground";
 
                   return (
                     <Tooltip key={segment.id}>
