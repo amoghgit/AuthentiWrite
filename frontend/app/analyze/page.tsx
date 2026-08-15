@@ -190,13 +190,65 @@ function Dashboard({ result, onReset }: { result: AnalysisData; onReset: () => v
     const doc = new jsPDF();
     let y = 20;
     const x = 20;
-    const lineHeight = 7;
+    const lineHeight = 6;
     const pageHeight = doc.internal.pageSize.height;
     const maxWidth = 170;
 
-    const addText = (text: string, size = 12, isBold = false) => {
+    // --- PROFESSIONAL HEADER ---
+    doc.setFillColor(15, 23, 42); // slate-900
+    doc.rect(0, 0, 210, 45, "F");
+    
+    // Logo Icon (Circle)
+    doc.setFillColor(79, 70, 229); // indigo-600
+    doc.circle(28, 22, 8, "F");
+    
+    // Logo Checkmark
+    doc.setDrawColor(255, 255, 255);
+    doc.setLineWidth(2);
+    doc.line(25, 22, 27, 24);
+    doc.line(27, 24, 32, 18);
+
+    // Brand Name
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(22);
+    doc.text("AuthentiWrite", 42, 25);
+    
+    // Subtitle
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(156, 163, 175); // gray-400
+    doc.text("AI Text Analysis & Authenticity Report", 42, 32);
+
+    // Date on the right
+    doc.setFontSize(10);
+    doc.setTextColor(156, 163, 175);
+    doc.text(`Date: ${new Date().toLocaleDateString()}`, 190, 25, { align: 'right' });
+    doc.text(`Time: ${new Date().toLocaleTimeString()}`, 190, 32, { align: 'right' });
+
+    // --- REPORT BODY ---
+    y = 60;
+
+    const addSectionHeader = (title: string) => {
+      if (y > pageHeight - 40) {
+        doc.addPage();
+        y = 20;
+      }
+      doc.setFontSize(14);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(31, 41, 55);
+      doc.text(title.toUpperCase(), x, y);
+      y += 3;
+      doc.setDrawColor(229, 231, 235);
+      doc.setLineWidth(0.5);
+      doc.line(x, y, 190, y);
+      y += 8;
+    };
+
+    const addText = (text: string, size = 11, isBold = false, color = [75, 85, 99]) => {
       doc.setFontSize(size);
       doc.setFont("helvetica", isBold ? "bold" : "normal");
+      doc.setTextColor(color[0], color[1], color[2]);
       
       const lines = doc.splitTextToSize(text, maxWidth);
       lines.forEach((line: string) => {
@@ -209,46 +261,65 @@ function Dashboard({ result, onReset }: { result: AnalysisData; onReset: () => v
       });
     };
 
-    addText("AUTHENTIWRITE ANALYSIS REPORT", 18, true);
-    y += 5;
-    addText(`Date: ${new Date().toLocaleString()}`, 10);
-    y += 10;
+    // Overall Assessment
+    addSectionHeader("Overall Assessment");
+    
+    doc.setFillColor(243, 244, 246);
+    doc.roundedRect(x, y, 170, 22, 2, 2, "F");
+    
+    doc.setFontSize(26);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(79, 70, 229);
+    doc.text(`${result.overallScore}/100`, x + 6, y + 15);
+    
+    doc.setFontSize(12);
+    doc.setTextColor(31, 41, 55);
+    doc.text(result.overallAssessment, x + 45, y + 10);
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(107, 114, 128);
+    doc.text(`Confidence level: ${result.confidence}`, x + 45, y + 16);
+    
+    y += 32;
 
-    addText("OVERALL ASSESSMENT", 14, true);
-    addText(`Score: ${result.overallScore}/100`);
-    addText(`Assessment: ${result.overallAssessment}`);
-    addText(`Confidence: ${result.confidence}`);
-    y += 10;
+    // Detailed Metrics
+    addSectionHeader("Detailed Metrics");
+    addText(`• Readability: ${result.metrics.readability}% (${result.metricDescriptions?.readability || ""})`);
+    addText(`• Vocabulary Diversity: ${result.metrics.vocabulary}% (${result.metricDescriptions?.vocabulary || ""})`);
+    addText(`• Sentence Complexity: ${result.metrics.complexity}% (${result.metricDescriptions?.complexity || ""})`);
+    addText(`• Grammar Quality: ${result.metrics.grammar}% (${result.metricDescriptions?.grammar || ""})`);
+    addText(`• Originality Estimate: ${result.metrics.originality}% (${result.metricDescriptions?.originality || ""})`);
+    y += 8;
 
-    addText("DETAILED METRICS", 14, true);
-    addText(`- Readability: ${result.metrics.readability}% (${result.metricDescriptions?.readability || ""})`);
-    addText(`- Vocabulary Diversity: ${result.metrics.vocabulary}% (${result.metricDescriptions?.vocabulary || ""})`);
-    addText(`- Sentence Complexity: ${result.metrics.complexity}% (${result.metricDescriptions?.complexity || ""})`);
-    addText(`- Grammar Quality: ${result.metrics.grammar}% (${result.metricDescriptions?.grammar || ""})`);
-    addText(`- Originality Estimate: ${result.metrics.originality}% (${result.metricDescriptions?.originality || ""})`);
-    y += 10;
-
-    addText("KEY INDICATORS", 14, true);
-    addText("[Human Characteristics]", 12, true);
+    // Key Indicators
+    addSectionHeader("Key Indicators");
+    addText("Human Characteristics", 11, true, [34, 197, 94]);
     if (result.humanIndicators.length > 0) {
-      result.humanIndicators.forEach(i => addText(`- ${i}`));
+      result.humanIndicators.forEach(i => addText(`  + ${i}`));
     } else {
-      addText("None detected");
+      addText("  None detected");
     }
-    y += 5;
+    y += 4;
 
-    addText("[AI Characteristics]", 12, true);
+    addText("AI Characteristics", 11, true, [239, 68, 68]);
     if (result.aiIndicators.length > 0) {
-      result.aiIndicators.forEach(i => addText(`- ${i}`));
+      result.aiIndicators.forEach(i => addText(`  - ${i}`));
     } else {
-      addText("None detected");
+      addText("  None detected");
     }
     y += 10;
 
-    addText("DETAILED ESSAY BREAKDOWN", 14, true);
+    // Essay Breakdown
+    addSectionHeader("Detailed Essay Breakdown");
     result.essay.forEach(seg => {
-      addText(`[${seg.classification}] ${seg.text}`);
-      y += 2;
+      const isAI = seg.classification === "Likely AI Assisted";
+      const isMixed = seg.classification === "Mixed";
+      const color = isAI ? [239, 68, 68] : isMixed ? [245, 158, 11] : [34, 197, 94];
+      
+      addText(`[${seg.classification}]`, 10, true, color as [number,number,number]);
+      addText(seg.text, 10, false, [75, 85, 99]);
+      y += 4;
     });
 
     doc.save(`authentiwrite-report-${Date.now()}.pdf`);
