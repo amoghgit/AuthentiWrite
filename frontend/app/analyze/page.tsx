@@ -189,7 +189,7 @@ function Dashboard({ result, onReset }: { result: AnalysisData; onReset: () => v
     
     let base64Logo = "";
     try {
-      const response = await fetch('/logo.jpg');
+      const response = await fetch('/logo.png');
       if (response.ok) {
         const blobData = await response.blob();
         base64Logo = await new Promise<string>((resolve) => {
@@ -215,7 +215,7 @@ function Dashboard({ result, onReset }: { result: AnalysisData; onReset: () => v
     
     if (base64Logo) {
       // Draw the imported logo image
-      doc.addImage(base64Logo, 'JPEG', 18, 12, 21, 21);
+      doc.addImage(base64Logo, 'PNG', 18, 12, 21, 21);
     }
 
     // Brand Name
