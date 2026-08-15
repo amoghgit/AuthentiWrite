@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Navbar } from "@/components/layout/Navbar";
 import { Button } from "@/components/ui/button";
@@ -25,7 +25,23 @@ export default function AnalyzePage() {
   const [isUploading, setIsUploading] = useState(false);
   const [result, setResult] = useState<AnalysisData | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { addAnalysis } = useAnalysisHistory();
+  const { addAnalysis, history } = useAnalysisHistory();
+
+  // Load from history if ID is present in URL
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const id = new URLSearchParams(window.location.search).get("id");
+      if (id && history.length > 0 && !result) {
+        const found = history.find(h => h.id === id);
+        if (found) {
+          setResult(found.result);
+          // Reconstruct text from essay segments to populate the text area
+          const reconstructedText = found.result.essay.map(s => s.text).join(" ");
+          setText(reconstructedText);
+        }
+      }
+    }
+  }, [history, result]);
 
   const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
   const charCount = text.length;

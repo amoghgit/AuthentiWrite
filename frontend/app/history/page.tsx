@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { Navbar } from "@/components/layout/Navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -68,7 +69,11 @@ export default function HistoryPage() {
                         transition={{ delay: idx * 0.05 }}
                         className="border-b border-border/50 hover:bg-secondary/10 transition-colors group"
                       >
-                        <td className="px-6 py-4 font-medium text-foreground">{entry.title}</td>
+                        <td className="px-6 py-4 font-medium text-foreground">
+                          <Link href={`/analyze?id=${entry.id}`} className="hover:text-primary transition-colors underline-offset-4 hover:underline">
+                            {entry.title}
+                          </Link>
+                        </td>
                         <td className="px-6 py-4 text-muted-foreground">
                           {new Date(entry.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                         </td>
