@@ -10,6 +10,7 @@ import { Loader2, Upload, FileText, Eraser, Copy, Download, CheckCircle, ShieldA
 import { AnalysisData } from "@/data/mock-analysis";
 import { analyzeText } from "@/lib/analyzer";
 import { toast } from "sonner";
+import { useAnalysisHistory } from "@/hooks/useAnalysisHistory";
 import {
   Tooltip,
   TooltipContent,
@@ -21,6 +22,7 @@ export default function AnalyzePage() {
   const [text, setText] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<AnalysisData | null>(null);
+  const { addAnalysis } = useAnalysisHistory();
 
   const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
   const charCount = text.length;
@@ -38,7 +40,9 @@ export default function AnalyzePage() {
     // Dynamic analysis based on actual essay content
     setTimeout(() => {
       setIsAnalyzing(false);
-      setResult(analyzeText(text));
+      const computedResult = analyzeText(text);
+      setResult(computedResult);
+      addAnalysis(text, computedResult);
       toast.success("Analysis complete!");
     }, 1500); // reduced simulated delay slightly for better UX
   };
