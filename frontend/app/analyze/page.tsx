@@ -11,6 +11,7 @@ import { AnalysisData } from "@/data/mock-analysis";
 import { analyzeText } from "@/lib/analyzer";
 import { toast } from "sonner";
 import { useAnalysisHistory } from "@/hooks/useAnalysisHistory";
+import { usePreferences } from "@/context/PreferencesContext";
 import jsPDF from "jspdf";
 import {
   Tooltip,
@@ -26,6 +27,7 @@ export default function AnalyzePage() {
   const [result, setResult] = useState<AnalysisData | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { addAnalysis, history } = useAnalysisHistory();
+  const { largeText } = usePreferences();
 
   // Load from history if ID is present in URL
   useEffect(() => {
@@ -152,7 +154,7 @@ export default function AnalyzePage() {
                   <div className="relative">
                     <Textarea
                       placeholder="Start typing or paste your essay here..."
-                      className="min-h-[400px] resize-none bg-background/50 border-border/50 text-base leading-relaxed p-6 rounded-xl focus-visible:ring-primary/50"
+                      className={`min-h-[400px] resize-none bg-background/50 border-border/50 ${largeText ? 'text-lg leading-loose' : 'text-base leading-relaxed'} p-6 rounded-xl focus-visible:ring-primary/50`}
                       value={text}
                       onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setText(e.target.value)}
                     />
@@ -261,6 +263,7 @@ export default function AnalyzePage() {
 
 // Inline Dashboard Component for simplicity in Phase 1
 function Dashboard({ result, onReset }: { result: AnalysisData; onReset: () => void }) {
+  const { largeText } = usePreferences();
   const handleExport = async () => {
     if (!result) return;
     
@@ -523,7 +526,7 @@ function Dashboard({ result, onReset }: { result: AnalysisData; onReset: () => v
             <CardDescription>Hover over highlighted segments to see detailed classification reasoning.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="bg-background/50 rounded-xl p-6 text-base leading-loose border border-border/50 font-inter">
+            <div className={`bg-background/50 rounded-xl p-6 ${largeText ? 'text-lg leading-[2.5]' : 'text-base leading-loose'} border border-border/50 font-inter`}>
               <TooltipProvider delay={200}>
                 {result.essay.map((segment) => {
                   let bgClass = "bg-accent/20 hover:bg-accent/30 text-foreground";
