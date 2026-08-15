@@ -197,16 +197,23 @@ function Dashboard({ result, onReset }: { result: AnalysisData; onReset: () => v
     // --- PROFESSIONAL HEADER ---
     doc.setFillColor(15, 23, 42); // slate-900
     doc.rect(0, 0, 210, 45, "F");
+    // Logo Icon Background (Dark Circle)
+    doc.setFillColor(30, 35, 55); 
+    doc.circle(28, 22, 9, "F");
     
-    // Logo Icon (Circle)
-    doc.setFillColor(79, 70, 229); // indigo-600
-    doc.circle(28, 22, 8, "F");
-    
+    // Logo Shield Outline
+    doc.setDrawColor(79, 70, 229); // indigo-600
+    doc.setLineWidth(1.2);
+    doc.line(24, 19.5, 28, 18);
+    doc.line(28, 18, 32, 19.5);
+    doc.line(32, 19.5, 32, 23.5);
+    doc.line(32, 23.5, 28, 26.5);
+    doc.line(28, 26.5, 24, 23.5);
+    doc.line(24, 23.5, 24, 19.5);
+
     // Logo Checkmark
-    doc.setDrawColor(255, 255, 255);
-    doc.setLineWidth(2);
-    doc.line(25, 22, 27, 24);
-    doc.line(27, 24, 32, 18);
+    doc.line(25.5, 22.5, 27.5, 24.5);
+    doc.line(27.5, 24.5, 30.5, 20.5);
 
     // Brand Name
     doc.setTextColor(255, 255, 255);
