@@ -184,8 +184,23 @@ export default function AnalyzePage() {
 
 // Inline Dashboard Component for simplicity in Phase 1
 function Dashboard({ result, onReset }: { result: AnalysisData; onReset: () => void }) {
-  const handleExport = () => {
+  const handleExport = async () => {
     if (!result) return;
+    
+    let base64Logo = "";
+    try {
+      const response = await fetch('/logo.jpg');
+      if (response.ok) {
+        const blobData = await response.blob();
+        base64Logo = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.readAsDataURL(blobData);
+        });
+      }
+    } catch (e) {
+      console.error("Failed to load logo", e);
+    }
 
     const doc = new jsPDF();
     let y = 20;
@@ -197,23 +212,11 @@ function Dashboard({ result, onReset }: { result: AnalysisData; onReset: () => v
     // --- PROFESSIONAL HEADER ---
     doc.setFillColor(15, 23, 42); // slate-900
     doc.rect(0, 0, 210, 45, "F");
-    // Logo Icon Background (Dark Circle)
-    doc.setFillColor(30, 35, 55); 
-    doc.circle(28, 22, 9, "F");
     
-    // Logo Shield Outline
-    doc.setDrawColor(79, 70, 229); // indigo-600
-    doc.setLineWidth(1.2);
-    doc.line(24, 19.5, 28, 18);
-    doc.line(28, 18, 32, 19.5);
-    doc.line(32, 19.5, 32, 23.5);
-    doc.line(32, 23.5, 28, 26.5);
-    doc.line(28, 26.5, 24, 23.5);
-    doc.line(24, 23.5, 24, 19.5);
-
-    // Logo Checkmark
-    doc.line(25.5, 22.5, 27.5, 24.5);
-    doc.line(27.5, 24.5, 30.5, 20.5);
+    if (base64Logo) {
+      // Draw the imported logo image
+      doc.addImage(base64Logo, 'JPEG', 18, 12, 21, 21);
+    }
 
     // Brand Name
     doc.setTextColor(255, 255, 255);
